@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
-import CANNON from 'cannon'
+import * as CANNON from 'cannon-es'
 
 /**
  * Debug
@@ -33,8 +33,23 @@ debugObject.createBox = () => {
   )
 }
 
+debugObject.reset = () => {
+  for(const object of objectsToUpdate) {
+
+    // Remove body
+    object.body.removeEventListener('collid', playHitSound)
+    world.removeBody(object.body)
+
+    // Remove mesh
+    scene.remove(object.mesh)
+    // objectsToUpdate.splice(0, objectsToUpdate.length)
+  }
+}
+
 gui.add(debugObject, 'createSphere')
 gui.add(debugObject, 'createBox')
+gui.add(debugObject, 'reset')
+
 /**
  * Base
  */
@@ -59,11 +74,11 @@ const playHitSound = (collision) => {
   }
 
   if(impactStrength > 6) {
-    hitSound.volume = 1
+    hitSound.volume = 0.8
   } else if(impactStrength < 6 && impactStrength > 3){
-    hitSound.volume = 0.5
+    hitSound.volume = 0.4
   } else {
-    hitSound.volume = 0.25
+    hitSound.volume = 0.15
   }
 }
 
